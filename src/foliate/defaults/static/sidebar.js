@@ -34,10 +34,12 @@
     .then(function (pages) {
       var current = decodeURI(location.pathname).replace(/\/?$/, "/");
       var folders = {};
+      var currentFolder = null;
       pages.forEach(function (p) {
         var parts = p.path.split("/");
         parts.pop();
         var key = parts.join("/");
+        if (p.url === current) currentFolder = key;
         (folders[key] = folders[key] || []).push(p);
       });
 
@@ -66,13 +68,15 @@
           title.textContent = label(key);
         }
         folder.appendChild(title);
-        var ul = node("ul", undefined, "sidebar-list");
-        rest.forEach(function (p) {
-          var li = node("li");
-          li.appendChild(link(p, current));
-          ul.appendChild(li);
-        });
-        folder.appendChild(ul);
+        if (key === currentFolder) {
+          var ul = node("ul", undefined, "sidebar-list");
+          rest.forEach(function (p) {
+            var li = node("li");
+            li.appendChild(link(p, current));
+            ul.appendChild(li);
+          });
+          folder.appendChild(ul);
+        }
         el.appendChild(folder);
       });
 

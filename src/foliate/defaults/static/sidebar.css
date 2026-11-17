@@ -19,6 +19,8 @@
     box-sizing: border-box;
     padding: 1.5rem 1rem 2rem 1.25rem;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-medium) transparent;
     border-right: 1px solid var(--border-light);
     background: var(--background-primary);
     font-family: var(--font-family-sans);
@@ -37,4 +39,8 @@
   .site-sidebar .sidebar-folder-title { padding: 0.1rem 0.25rem; color: var(--text-primary); }
   .site-sidebar .sidebar-folder-title a { padding: 0; }
   .site-sidebar .sidebar-folder .sidebar-list { margin: 0.15rem 0 0 0.75rem; }
+
+  .site-sidebar::-webkit-scrollbar { width: 6px; }
+  .site-sidebar::-webkit-scrollbar-track { background: transparent; }
+  .site-sidebar::-webkit-scrollbar-thumb { background: var(--border-medium); border-radius: 3px; }
 }

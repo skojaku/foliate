@@ -841,3 +841,12 @@ article .katex {
     text-decoration: underline;
   }
 }
+
+.page-edit {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+}
+
+.page-edit a {
+  color: var(--text-muted, inherit);
+}

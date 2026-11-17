@@ -237,6 +237,7 @@ class Page:
     toc: str = ""
     file_modified: str | None = None
     file_mtime: float | None = None
+    source_path: str | None = None  # source file, relative to the vault
     is_published: bool = False
     published_at: datetime | None = None
     modified_at: datetime | None = None

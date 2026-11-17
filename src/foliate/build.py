@@ -6,6 +6,7 @@ from collections.abc import Callable, Iterable, Iterator
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import quote
 
 from jinja2 import Environment
 
@@ -525,6 +526,8 @@ def render_page_to_file(
         new_page_paths=new_page_paths,
         current_page=page,
         base_url=base_url,
+        edit_url=_edit_url(page, config),
+        edit_label=config.edit.label,
         **ctx,
     )
 
@@ -713,6 +716,23 @@ def _get_output_paths_for_source(
     return paths_to_remove
 
 
+def _vault_relative_path(source_file: Path, config: Config) -> str | None:
+    """Return the source file's path relative to the vault, with / separators."""
+    if config.vault_path is None:
+        return None
+    try:
+        return source_file.relative_to(config.vault_path).as_posix()
+    except ValueError:
+        return None
+
+
+def _edit_url(page: Page, config: Config) -> str | None:
+    """Return the "edit this page" URL for a page, if configured."""
+    if not config.edit.url or not page.source_path:
+        return None
+    return config.edit.url.replace("{path}", quote(page.source_path, safe="/"))
+
+
 def process_single_md_file(
     md_file: Path,
     page_path: str,
@@ -759,6 +779,7 @@ def process_single_md_file(
             slugify_urls=config.build.slugify_urls,
             gated=config.access.gated,
         )
+        page.source_path = _vault_relative_path(md_file, config)
         return page, False
 
     # Rebuild
@@ -773,6 +794,7 @@ def process_single_md_file(
         slugify_urls=config.build.slugify_urls,
         gated=config.access.gated,
     )
+    page.source_path = _vault_relative_path(md_file, config)
     render_page_to_file(page, build_dir, env, config, None, content_base_url)
     return page, True
 

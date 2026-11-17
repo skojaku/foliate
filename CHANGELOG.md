@@ -4,6 +4,7 @@
 
 ### Added
 
+- `[edit] url`: an "Edit this page" link on every page. `{path}` in the template becomes the page's source file path relative to the vault, so `https://github.com/OWNER/REPO/edit/main/{path}` opens GitHub's web editor. `[edit] label` changes the text.
 - `[access] gated = true` for a site served behind an access gate (Cloudflare Access, a VPN). Every page is built and listed unless it says `public: false` or `published: false`; pages carry `noindex` and the build writes `robots.txt`; `foliate deploy` to GitHub Pages is refused. Foliate does not check who is asking: a static site has no server to do that, so the gate has to be the host's.
 - Relative Markdown links between notes (`[x](other.md)`, `[x](../folder/)`) now resolve to the built pages. A folder link points at that folder's `index.md`. A link to a page that is not built becomes plain text, like a private wikilink.
 - ```` ```mermaid ```` code blocks render to inline, themeable SVG at build time with a vendored copy of [Pele](https://github.com/obsidianmd/pele) 1.10.0 (MIT), the renderer Obsidian uses since 1.15. Needs `node` on `PATH`; without it, or on a syntax error, the block stays a code block and the build warns. The default stylesheet maps Pele's `--pele-*` variables to the theme's colors and fonts. `make update-pele` refreshes the bundle.

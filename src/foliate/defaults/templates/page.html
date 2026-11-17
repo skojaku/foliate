@@ -19,6 +19,9 @@
         {% endif %}
     </p>
     {% endif %}
+    {% if edit_url %}
+    <p class="page-edit"><a href="{{ edit_url }}" rel="noopener">{{ edit_label }}</a></p>
+    {% endif %}
 </header>
 
 {% if floating_toc and page.toc and base_url != "/" %}

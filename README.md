@@ -100,6 +100,18 @@ Every page is then built and listed unless it says `public: false` / `published:
 
 Relative Markdown links between notes (`[x](other.md)`, `[x](../folder/)`) resolve to the built pages; a folder link points at that folder's `index.md`.
 
+### Edit links
+
+For a vault kept in a GitHub repository, add an "Edit this page" link to every page:
+
+```toml
+[edit]
+url = "https://github.com/OWNER/REPO/edit/main/{path}"   # {path}: file path inside the vault
+label = "Edit this page"
+```
+
+If the vault is a subfolder of the repository, put it before `{path}` (`.../edit/main/wiki/{path}`). On a protected branch GitHub's editor opens a pull request instead of committing.
+
 ## Configuration
 
 `.foliate/config.toml`:

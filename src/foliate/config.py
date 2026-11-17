@@ -379,6 +379,21 @@ class DeployConfig:
 
 
 @dataclass
+class EditConfig:
+    """Per-page "edit this page" link.
+
+    ``url`` is a template; ``{path}`` becomes the page's source file path
+    relative to the vault, e.g. ``compute/spiedie.md``. For a vault kept in a
+    GitHub repository, ``https://github.com/OWNER/REPO/edit/main/{path}`` opens
+    GitHub's web editor (add the vault's folder before ``{path}`` if the vault
+    is a subfolder of the repository).
+    """
+
+    url: str = ""
+    label: str = "Edit this page"
+
+
+@dataclass
 class AccessConfig:
     """Access-gate configuration.
 
@@ -417,6 +432,7 @@ class Config:
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
     deploy: DeployConfig = field(default_factory=DeployConfig)
     access: AccessConfig = field(default_factory=AccessConfig)
+    edit: EditConfig = field(default_factory=EditConfig)
     feed: FeedConfig = field(default_factory=FeedConfig)
 
     # Computed paths (set after loading)
@@ -473,6 +489,7 @@ class Config:
             "advanced",
             "deploy",
             "access",
+            "edit",
             "feed",
             "visibility",
         }
@@ -597,6 +614,30 @@ class Config:
                 ),
             },
         )
+        config.edit = _load_optional_dataclass_section(
+            data,
+            "edit",
+            EditConfig,
+            config.edit,
+            config_path,
+            transforms={
+                "url": _require_string_value(
+                    section="edit",
+                    field_name="url",
+                    config_path=config_path,
+                ),
+                "label": _require_string_value(
+                    section="edit",
+                    field_name="label",
+                    config_path=config_path,
+                ),
+            },
+        )
+        if config.edit.url and "{path}" not in config.edit.url:
+            raise ValueError(
+                f"Config [edit].url in {config_path} must contain {{path}}, "
+                "the placeholder for the page's source file path"
+            )
         config.feed = _load_optional_dataclass_section(
             data,
             "feed",

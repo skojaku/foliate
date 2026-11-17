@@ -81,8 +81,6 @@
         el.appendChild(folder);
       });
 
-      var active = el.querySelector("[aria-current]");
-      if (active && active.scrollIntoView) active.scrollIntoView({ block: "center" });
     })
     .catch(function () { el.hidden = true; });
 })();

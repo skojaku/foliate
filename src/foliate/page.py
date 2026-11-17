@@ -109,6 +109,31 @@ def _resolve_explicit_modified_at(
     return _first_parsed_date(updated, modified)
 
 
+def is_public_meta(meta: Frontmatter, gated: bool = False) -> bool:
+    """Return whether frontmatter makes a page buildable.
+
+    On an ordinary site a page must say ``public: true``. On a gated site
+    (``[access] gated = true``) every page is buildable unless it says
+    ``public: false``.
+    """
+    value = meta.get("public")
+    if gated and value is None:
+        return True
+    return bool(value)
+
+
+def is_published_meta(meta: Frontmatter, gated: bool = False) -> bool:
+    """Return whether frontmatter lists a page in indexes and search.
+
+    ``published`` may also hold a date, which counts as true. On a gated site
+    a page is listed unless it says ``published: false``.
+    """
+    value = meta.get("published")
+    if gated and value is None:
+        return True
+    return bool(value)
+
+
 def _coerce_tags(value: object) -> list[str]:
     if isinstance(value, list):
         return [str(tag) for tag in value]
@@ -227,6 +252,7 @@ class Page:
         file_path: Path | None = None,
         base_url: str = "/wiki/",
         slugify_urls: bool = False,
+        gated: bool = False,
     ) -> "Page":
         """Create a normalized page object from source markdown."""
         published = meta.get("published")
@@ -257,7 +283,7 @@ class Page:
             tags=_coerce_tags(meta.get("tags")),
             file_modified=file_metadata.file_modified,
             file_mtime=file_metadata.file_mtime,
-            is_published=bool(published),
+            is_published=is_published_meta(meta, gated),
             published_at=page_dates.published_at,
             modified_at=page_dates.modified_at,
             modified_display=page_dates.modified_display,

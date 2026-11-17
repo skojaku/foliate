@@ -8,6 +8,7 @@ from pathlib import Path
 from .assets import get_user_static_dir
 from .cache import BUILD_CACHE_FILE, load_build_cache
 from .config import Config
+from .page import is_public_meta
 from .templates import get_user_templates_dir
 
 
@@ -180,7 +181,7 @@ def _collect_public_source_paths(config: Config) -> set[str]:
 
     for source in selected_sources:
         meta, _ = parse_markdown_file(source.source_file)
-        if bool(meta.get("public", False)):
+        if is_public_meta(meta, config.access.gated):
             cache_source = source.source_file
             # Quarto sources are cached under their rendered .md path after
             # preprocessing, so compare using the same normalized key format.
@@ -387,6 +388,15 @@ def deploy_github_pages(
 
     # Initialize logging
     setup_logging(verbose=verbose)
+
+    # A gated site is private by default; GitHub Pages would serve it to anyone.
+    if config.access.gated:
+        error(
+            "This site is gated ([access] gated = true) and cannot be deployed "
+            "to GitHub Pages, which serves it to everyone. Deploy the build "
+            "directory to a host that sits behind the access gate."
+        )
+        return False
 
     # Run build first if requested
     if build_first:

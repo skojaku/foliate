@@ -17,6 +17,7 @@ from .build import (
 )
 from .config import Config
 from .markdown_utils import parse_markdown_file
+from .page import is_public_meta, is_published_meta
 from .quarto import get_buildable_content_suffixes
 
 
@@ -182,8 +183,8 @@ def scan_status(config: Config) -> StatusReport:
 
     for source in selected_sources:
         meta, _ = parse_markdown_file(source.source_file)
-        is_public = bool(meta.get("public", False))
-        is_published = bool(meta.get("published", False))
+        is_public = is_public_meta(meta, config.access.gated)
+        is_published = is_published_meta(meta, config.access.gated)
 
         if is_public:
             state = _get_page_state(

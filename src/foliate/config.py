@@ -379,6 +379,21 @@ class DeployConfig:
 
 
 @dataclass
+class AccessConfig:
+    """Access-gate configuration.
+
+    ``gated`` declares that the whole site is served behind an access gate
+    (Cloudflare Access, a VPN, ...). Foliate cannot enforce the gate itself:
+    a static site has no server to check who is asking. What this flag does is
+    make a gated site safe to author and hard to publish by mistake: every page
+    is built and listed unless it says ``public: false``, crawlers are told to
+    stay away, and ``foliate deploy`` to GitHub Pages is refused.
+    """
+
+    gated: bool = False
+
+
+@dataclass
 class FeedConfig:
     """Feed generation configuration."""
 
@@ -401,6 +416,7 @@ class Config:
     footer: FooterConfig = field(default_factory=FooterConfig)
     advanced: AdvancedConfig = field(default_factory=AdvancedConfig)
     deploy: DeployConfig = field(default_factory=DeployConfig)
+    access: AccessConfig = field(default_factory=AccessConfig)
     feed: FeedConfig = field(default_factory=FeedConfig)
 
     # Computed paths (set after loading)
@@ -456,6 +472,7 @@ class Config:
             "footer",
             "advanced",
             "deploy",
+            "access",
             "feed",
             "visibility",
         }
@@ -563,6 +580,20 @@ class Config:
                 "target": _expand_string_path_value(
                     section="deploy",
                     field_name="target",
+                ),
+            },
+        )
+        config.access = _load_optional_dataclass_section(
+            data,
+            "access",
+            AccessConfig,
+            config.access,
+            config_path,
+            transforms={
+                "gated": _require_bool_value(
+                    section="access",
+                    field_name="gated",
+                    config_path=config_path,
                 ),
             },
         )
@@ -733,6 +764,7 @@ class Config:
             "home_page": self.build.home_page,
             "floating_toc": self.build.floating_toc,
             "foldable_headings": self.build.foldable_headings,
+            "gated": self.access.gated,
             "feed_enabled": self.feed.enabled,
             "feed_title": self.feed.title or self.site.name,
             "search_index_url": self.base_urls["wiki"] + "search.json",

@@ -29,7 +29,7 @@ from .markdown_utils import (
     render_markdown,
     slugify_path,
 )
-from .page import Frontmatter, Page
+from .page import Frontmatter, Page, is_public_meta
 from .templates import get_template_loader
 
 _REDIRECT_TEMPLATE = """\
@@ -601,13 +601,13 @@ def iter_public_md_files(
         if updated_visibility_cache is not None:
             record = _make_source_visibility_record(
                 parse_file,
-                is_public=bool(meta.get("public", False)),
+                is_public=is_public_meta(meta, config.access.gated),
             )
             if record is not None:
                 updated_visibility_cache[cache_key] = record
 
         # Check visibility
-        if not meta.get("public", False):
+        if not is_public_meta(meta, config.access.gated):
             if single_page and page_path == single_page:
                 debug(f"  Building single page (overriding privacy): {page_path}")
             else:
@@ -757,6 +757,7 @@ def process_single_md_file(
             file_path=md_file,
             base_url=content_base_url,
             slugify_urls=config.build.slugify_urls,
+            gated=config.access.gated,
         )
         return page, False
 
@@ -770,6 +771,7 @@ def process_single_md_file(
         file_path=md_file,
         base_url=content_base_url,
         slugify_urls=config.build.slugify_urls,
+        gated=config.access.gated,
     )
     render_page_to_file(page, build_dir, env, config, None, content_base_url)
     return page, True
@@ -1009,6 +1011,12 @@ def generate_sitemap(
     (build_dir / "sitemap.txt").write_text("\n".join(sitemap_lines), encoding="utf-8")
 
 
+def generate_robots_txt(build_dir: Path) -> None:
+    """Tell crawlers to skip a gated site (the gate is the real protection)."""
+    robots = build_dir / "robots.txt"
+    robots.write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
+
+
 def generate_site_files(
     build_dir: Path,
     env: Environment,
@@ -1053,6 +1061,8 @@ def generate_site_files(
 
     generate_search_index(build_dir, published_pages, wiki_dir_name)
     generate_sitemap(build_dir, public_pages)
+    if config.access.gated:
+        generate_robots_txt(build_dir)
 
 
 def _generate_full_site_outputs(

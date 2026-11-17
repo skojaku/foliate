@@ -76,6 +76,8 @@ class TestCustomCss:
         build.build(config=config, force_rebuild=True)
         html = _html(vault, "wiki", "Home")
         assert html.index("/static/main.css") < html.index("/static/custom.css")
+        # custom.css is last, so it also wins over the sidebar and katex styles
+        assert html.index("katex.min.css") < html.index("/static/custom.css")
         assert (vault / ".foliate" / "build" / "static" / "custom.css").exists()
 
     def test_no_custom_css_link_by_default(self, tmp_path):

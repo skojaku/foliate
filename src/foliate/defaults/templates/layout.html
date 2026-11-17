@@ -41,7 +41,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/main.css">
-    {% if custom_css %}<link rel="stylesheet" type="text/css" href="/static/custom.css">{% endif %}
     {% if sidebar %}
     <link rel="stylesheet" href="/static/sidebar.css">
     <script src="/static/sidebar.js" defer></script>
@@ -51,6 +50,7 @@
     <script src="/static/foldable-headings.js" defer></script>
     {% endif %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    {% if custom_css %}<link rel="stylesheet" type="text/css" href="/static/custom.css">{% endif %}
 
     <!-- Atom Feed autodiscovery -->
     {% if feed_enabled %}

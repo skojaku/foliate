@@ -58,24 +58,22 @@
         var list = folders[key];
         var index = list.filter(isIndex)[0];
         var rest = list.filter(function (p) { return !isIndex(p); }).sort(byTitle);
-        var details = node("details", undefined, "sidebar-folder");
-        var summary = node("summary");
-        summary.appendChild(node("span", label(key)));
-        details.appendChild(summary);
-        var ul = node("ul", undefined, "sidebar-list");
+        var folder = node("div", undefined, "sidebar-folder");
+        var title = node("div", undefined, "sidebar-folder-title");
         if (index) {
-          var li = node("li");
-          li.appendChild(link({ title: "Overview", url: index.url, path: index.path }, current));
-          ul.appendChild(li);
+          title.appendChild(link({ title: label(key), url: index.url, path: index.path }, current));
+        } else {
+          title.textContent = label(key);
         }
+        folder.appendChild(title);
+        var ul = node("ul", undefined, "sidebar-list");
         rest.forEach(function (p) {
           var li = node("li");
           li.appendChild(link(p, current));
           ul.appendChild(li);
         });
-        details.appendChild(ul);
-        if (list.some(function (p) { return p.url === current; })) details.open = true;
-        el.appendChild(details);
+        folder.appendChild(ul);
+        el.appendChild(folder);
       });
 
       var active = el.querySelector("[aria-current]");

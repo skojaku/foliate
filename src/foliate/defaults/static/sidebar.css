@@ -1,0 +1,44 @@
+/* Page index on the left (build.sidebar = true). Shown on wide viewports only. */
+.site-sidebar { display: none; }
+
+@media (min-width: 1000px) {
+  body.has-sidebar {
+    margin-left: 17rem;
+    margin-right: 2rem;
+    width: auto;
+    max-width: 800px;
+  }
+
+  .site-sidebar {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 15rem;
+    box-sizing: border-box;
+    padding: 1.5rem 1rem 2rem 1.25rem;
+    overflow-y: auto;
+    border-right: 1px solid var(--border-light);
+    background: var(--background-primary);
+    font-family: var(--font-family-sans);
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .site-sidebar .sidebar-list { list-style: none; margin: 0 0 0.75rem; padding: 0; }
+  .site-sidebar .sidebar-list li { margin: 0.15rem 0; }
+
+  .site-sidebar a { display: block; padding: 0.1rem 0.25rem; border-radius: 3px; text-decoration: none; }
+  .site-sidebar a:hover { background: var(--background-code); text-decoration: none; }
+  .site-sidebar a[aria-current] { background: var(--background-code); font-weight: 600; }
+
+  .site-sidebar .sidebar-folder { margin: 0.35rem 0; }
+  .site-sidebar summary {
+    cursor: pointer;
+    padding: 0.15rem 0.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .site-sidebar .sidebar-folder .sidebar-list { margin: 0.15rem 0 0.5rem 0.75rem; }
+}

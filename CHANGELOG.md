@@ -4,6 +4,7 @@
 
 ### Added
 
+- `build.sidebar`: a page index on the left of wide viewports (1000px and up). It is built in the browser from `search.json`, grouped by folder, with the current page's folder open, so adding a page does not rebuild the others. Off by default.
 - `.foliate/static/custom.css` is linked after `main.css` when it exists, so a site can restyle a few rules without replacing the whole stylesheet.
 - `[edit] url`: an "Edit this page" link on every page. `{path}` in the template becomes the page's source file path relative to the vault, so `https://github.com/OWNER/REPO/edit/main/{path}` opens GitHub's web editor. `[edit] label` changes the text.
 - `[access] gated = true` for a site served behind an access gate (Cloudflare Access, a VPN). Every page is built and listed unless it says `public: false` or `published: false`; pages carry `noindex` and the build writes `robots.txt`; `foliate deploy` to GitHub Pages is refused. Foliate does not check who is asking: a static site has no server to do that, so the gate has to be the host's.

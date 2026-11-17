@@ -42,6 +42,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/main.css">
     {% if custom_css %}<link rel="stylesheet" type="text/css" href="/static/custom.css">{% endif %}
+    {% if sidebar %}
+    <link rel="stylesheet" href="/static/sidebar.css">
+    <script src="/static/sidebar.js" defer></script>
+    {% endif %}
     {% if foldable_headings %}
     <link rel="stylesheet" href="/static/foldable-headings.css">
     <script src="/static/foldable-headings.js" defer></script>
@@ -53,7 +57,10 @@
     <link rel="alternate" type="application/atom+xml" title="{{ feed_title or site_name }}" href="{{ site_url }}/feed.xml">
     {% endif %}
 </head>
-<body>
+<body{% if sidebar %} class="has-sidebar"{% endif %}>
+    {% if sidebar and search_index_url %}
+    <aside id="site-sidebar" class="site-sidebar" data-index="{{ search_index_url }}" aria-label="Pages"></aside>
+    {% endif %}
     <nav class="top-nav">
         {% for nav_item in header_nav %}
             {% if not loop.first %}<span class="nav-separator">·</span>{% endif %}

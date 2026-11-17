@@ -337,6 +337,7 @@ class BuildConfig:
     new_page_window: int = 30  # Days within which a page is considered "new"
     floating_toc: bool = False  # Floating table of contents on wide viewports
     foldable_headings: bool = False  # Collapsible h2 sections, initially expanded
+    sidebar: bool = False  # Page index on the left of wide viewports
 
 
 @dataclass
@@ -565,6 +566,11 @@ class Config:
                 "foldable_headings": _require_bool_value(
                     section="build",
                     field_name="foldable_headings",
+                    config_path=config_path,
+                ),
+                "sidebar": _require_bool_value(
+                    section="build",
+                    field_name="sidebar",
                     config_path=config_path,
                 ),
             },
@@ -810,6 +816,7 @@ class Config:
             "home_page": self.build.home_page,
             "floating_toc": self.build.floating_toc,
             "foldable_headings": self.build.foldable_headings,
+            "sidebar": self.build.sidebar,
             "gated": self.access.gated,
             "custom_css": self._has_custom_css(),
             "feed_enabled": self.feed.enabled,

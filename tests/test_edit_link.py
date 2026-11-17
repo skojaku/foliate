@@ -82,3 +82,24 @@ class TestCustomCss:
         vault, config = _vault(tmp_path, "")
         build.build(config=config, force_rebuild=True)
         assert "custom.css" not in _html(vault, "wiki", "Home")
+
+
+class TestSidebar:
+    def test_sidebar_markup_and_assets_when_enabled(self, tmp_path):
+        vault, config = _vault(tmp_path, "")
+        path = vault / ".foliate" / "config.toml"
+        path.write_text(path.read_text().replace("[build]", "[build]\nsidebar = true"))
+        config = Config.load(path)
+        build.build(config=config, force_rebuild=True)
+        html = _html(vault, "wiki", "Home")
+        assert 'id="site-sidebar"' in html
+        assert 'data-index="/wiki/search.json"' in html
+        assert "/static/sidebar.js" in html
+        assert (vault / ".foliate" / "build" / "static" / "sidebar.js").exists()
+
+    def test_no_sidebar_by_default(self, tmp_path):
+        vault, config = _vault(tmp_path, "")
+        build.build(config=config, force_rebuild=True)
+        html = _html(vault, "wiki", "Home")
+        assert "site-sidebar" not in html
+        assert "sidebar.js" not in html

@@ -17,7 +17,8 @@ SOURCE_VISIBILITY_CACHE_KEY = "__source_visibility__"
 # 3: floating TOC alignment changed the default stylesheet.
 # 4: floating TOC controls changed the default page template and stylesheet.
 # 5: ```mermaid fences render to inline SVG (Pele); stylesheet themes them.
-BUILD_SCHEMA_VERSION = 5
+# 6: relative Markdown links between notes are rewritten at render time.
+BUILD_SCHEMA_VERSION = 6
 SOURCE_VISIBILITY_CACHE_VERSION = 1
 GLOBAL_CACHE_KEYS = frozenset(
     {

@@ -87,6 +87,19 @@ published: true    # Also appears in listings and search
 - `public: true` → Built, accessible via URL
 - `public: true, published: true` → Built AND visible in listings
 
+### Private sites behind an access gate
+
+A static site cannot check who is asking, so access control has to come from the host: Cloudflare Access, a VPN, HTTP auth. For a whole site that is private to a group, say so in the config:
+
+```toml
+[access]
+gated = true
+```
+
+Every page is then built and listed unless it says `public: false` / `published: false`. Pages carry `noindex`, the build writes a `robots.txt`, and `foliate deploy` to GitHub Pages is refused, because GitHub Pages would show the site to everyone. Deploy `.foliate/build/` to a host behind the gate.
+
+Relative Markdown links between notes (`[x](other.md)`, `[x](../folder/)`) resolve to the built pages; a folder link points at that folder's `index.md`.
+
 ## Configuration
 
 `.foliate/config.toml`:

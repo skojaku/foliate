@@ -10,6 +10,7 @@ from .markdown_utils import (
     render_markdown_with_toc,
     slugify_path,
 )
+from .relative_links import rewrite_relative_page_links
 
 type Frontmatter = dict[str, object]
 
@@ -266,6 +267,9 @@ class Page:
             if render_html
             else ("", "")
         )
+
+        if html:
+            html = rewrite_relative_page_links(html, page_path, base_url, slugify_urls)
 
         return cls(
             path=page_path,

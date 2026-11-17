@@ -59,7 +59,9 @@
 </head>
 <body{% if sidebar %} class="has-sidebar"{% endif %}>
     {% if sidebar and search_index_url %}
-    <aside id="site-sidebar" class="site-sidebar" data-index="{{ search_index_url }}" aria-label="Pages"></aside>
+    <aside id="site-sidebar" class="site-sidebar" data-index="{{ search_index_url }}" aria-label="Pages">
+        <button type="button" class="sidebar-search" data-search-open>Search <kbd>/</kbd></button>
+    </aside>
     {% endif %}
     <nav class="top-nav">
         {% for nav_item in header_nav %}

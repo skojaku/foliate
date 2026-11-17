@@ -97,6 +97,7 @@ class TestSidebar:
         assert 'id="site-sidebar"' in html
         assert 'data-index="/wiki/search.json"' in html
         assert "/static/sidebar.js" in html
+        assert "data-search-open" in html
         assert (vault / ".foliate" / "build" / "static" / "sidebar.js").exists()
 
     def test_no_sidebar_by_default(self, tmp_path):

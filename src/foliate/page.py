@@ -149,6 +149,19 @@ def _coerce_str(value: object, fallback: str = "") -> str:
     return fallback
 
 
+def _first_heading(markdown_content: str) -> str:
+    """Return the text of the first level-1 heading outside code fences."""
+    in_fence = False
+    for line in markdown_content.splitlines():
+        stripped = line.strip()
+        if stripped.startswith(("```", "~~~")):
+            in_fence = not in_fence
+            continue
+        if not in_fence and line.startswith("# "):
+            return line[2:].strip().rstrip("#").strip()
+    return ""
+
+
 def _build_page_url(page_path: str, base_url: str, slugify_urls: bool) -> str:
     """Build the public URL for a page path."""
     url_path = slugify_path(page_path) if slugify_urls else page_path
@@ -274,7 +287,9 @@ class Page:
 
         return cls(
             path=page_path,
-            title=_coerce_str(meta.get("title"), fallback=page_path) or page_path,
+            title=_coerce_str(meta.get("title"))
+            or _first_heading(markdown_content)
+            or page_path,
             meta=meta,
             body=markdown_content,
             html=html,

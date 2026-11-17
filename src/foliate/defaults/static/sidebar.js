@@ -13,8 +13,9 @@
   }
 
   function title(page) {
+    if (page.path === "index") return "Home";
     if (page.title && page.title !== page.path) return page.title;
-    return page.path === "index" ? "Home" : label(page.path);
+    return label(page.path);
   }
 
   function link(page, current) {

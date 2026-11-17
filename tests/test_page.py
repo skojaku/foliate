@@ -351,3 +351,26 @@ class TestPageFromMarkdown:
         assert page.file_modified is None
         assert page.published_at is None
         assert page.modified_at is None
+
+
+class TestTitleFallback:
+    def test_first_heading_is_the_title_when_there_is_no_frontmatter_title(self):
+        page = Page.from_markdown(
+            "compute/index", {}, "intro\n\n# Compute\n\ntext", render_html=False
+        )
+        assert page.title == "Compute"
+
+    def test_frontmatter_title_wins(self):
+        page = Page.from_markdown(
+            "a", {"title": "From frontmatter"}, "# Heading", render_html=False
+        )
+        assert page.title == "From frontmatter"
+
+    def test_heading_inside_a_code_fence_is_ignored(self):
+        body = "```\n# not a heading\n```\n\ntext"
+        page = Page.from_markdown("notes/x", {}, body, render_html=False)
+        assert page.title == "notes/x"
+
+    def test_second_level_heading_is_not_a_title(self):
+        page = Page.from_markdown("notes/y", {}, "## Sub", render_html=False)
+        assert page.title == "notes/y"

@@ -2,7 +2,6 @@
 
 from foliate import build
 from foliate.config import Config
-from foliate.page import Page
 from foliate.relative_links import rewrite_relative_page_links as rewrite
 
 

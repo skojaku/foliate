@@ -65,3 +65,20 @@ class TestEditLink:
         path.write_text('[edit]\nurl = "https://github.com/o/r"\n')
         with pytest.raises(ValueError, match="must contain"):
             Config.load(path)
+
+
+class TestCustomCss:
+    def test_custom_css_is_linked_after_main_css(self, tmp_path):
+        vault, config = _vault(tmp_path, "")
+        (vault / ".foliate" / "static").mkdir()
+        (vault / ".foliate" / "static" / "custom.css").write_text("a { color: red }")
+        config = Config.load(vault / ".foliate" / "config.toml")
+        build.build(config=config, force_rebuild=True)
+        html = _html(vault, "wiki", "Home")
+        assert html.index("/static/main.css") < html.index("/static/custom.css")
+        assert (vault / ".foliate" / "build" / "static" / "custom.css").exists()
+
+    def test_no_custom_css_link_by_default(self, tmp_path):
+        vault, config = _vault(tmp_path, "")
+        build.build(config=config, force_rebuild=True)
+        assert "custom.css" not in _html(vault, "wiki", "Home")

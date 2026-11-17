@@ -760,6 +760,11 @@ class Config:
                 return templates_dir
         return None
 
+    def _has_custom_css(self) -> bool:
+        """Whether `.foliate/static/custom.css` exists (loaded after main.css)."""
+        static_dir = self.get_static_dir()
+        return bool(static_dir and (static_dir / "custom.css").is_file())
+
     def get_static_dir(self) -> Path | None:
         """Get custom static directory if it exists."""
         if self.vault_path:
@@ -806,6 +811,7 @@ class Config:
             "floating_toc": self.build.floating_toc,
             "foldable_headings": self.build.foldable_headings,
             "gated": self.access.gated,
+            "custom_css": self._has_custom_css(),
             "feed_enabled": self.feed.enabled,
             "feed_title": self.feed.title or self.site.name,
             "search_index_url": self.base_urls["wiki"] + "search.json",

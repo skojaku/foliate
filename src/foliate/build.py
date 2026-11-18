@@ -31,6 +31,7 @@ from .markdown_utils import (
     slugify_path,
 )
 from .page import Frontmatter, Page, is_public_meta
+from .relative_links import rewrite_relative_page_links
 from .templates import get_template_loader
 
 _REDIRECT_TEMPLATE = """\
@@ -987,7 +988,14 @@ def render_home_page(
     debug(f"  Re-rendering {home_page_name} page with recent pages...")
 
     if not home_page.html:
-        home_page.html = render_markdown(home_page.body, home_base_url)
+        # A cached home page has no HTML yet. Render it the way
+        # Page.from_markdown does, relative note links included.
+        home_page.html = rewrite_relative_page_links(
+            render_markdown(home_page.body, home_base_url),
+            home_page.path,
+            home_base_url,
+            config.build.slugify_urls,
+        )
 
     render_page_to_file(
         home_page, build_dir, env, config, published_pages, home_base_url

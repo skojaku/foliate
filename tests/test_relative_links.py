@@ -72,3 +72,35 @@ class TestInBuild:
         assert "wikilink-private" in home
         a = (out / "sub" / "a" / "index.html").read_text()
         assert 'href="/wiki/index/"' in a
+
+    def test_home_page_links_resolve_after_an_incremental_build(self, tmp_path):
+        # An incremental build loads the unchanged home page without HTML and
+        # renders it again in render_home_page; its links must be rewritten too.
+        import os
+
+        vault = tmp_path / "vault"
+        (vault / ".foliate").mkdir(parents=True)
+        (vault / ".foliate" / "config.toml").write_text(
+            '[build]\nhome_page = "index"\n[access]\ngated = true\n'
+        )
+        (vault / "sub").mkdir()
+        (vault / "index.md").write_text(
+            "---\ntitle: Home\n---\n[a](sub/a.md) [f](sub/) [i](sub/index.md)\n"
+        )
+        (vault / "sub" / "index.md").write_text("---\ntitle: Sub\n---\nx\n")
+        page = vault / "sub" / "a.md"
+        page.write_text("---\ntitle: A\n---\nfirst\n")
+        config = Config.load(vault / ".foliate" / "config.toml")
+        build.build(config=config, force_rebuild=True)
+
+        page.write_text("---\ntitle: A\n---\nsecond\n")
+        stat = page.stat()
+        os.utime(page, (stat.st_atime + 10, stat.st_mtime + 10))
+        build.build(config=Config.load(vault / ".foliate" / "config.toml"))
+
+        out = vault / ".foliate" / "build" / "wiki"
+        assert "second" in (out / "sub" / "a" / "index.html").read_text()
+        home = (out / "index" / "index.html").read_text()
+        assert 'href="/wiki/sub/a/"' in home
+        assert home.count('href="/wiki/sub/index/"') >= 2
+        assert 'href="sub/' not in home
